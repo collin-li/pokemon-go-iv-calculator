@@ -1,5 +1,5 @@
 Attribute VB_Name = "IVCalculator"
-Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, rminHP As Integer, rmaxHP As Integer, minADS As Double, maxADS As Double, AppraisalSum As String, AppraisalHP As Boolean, AppraisalAtk As Boolean, AppraisalDef As Boolean, AppraisalBest As String) As Variant
+Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, rminHP As Integer, rmaxHP As Integer, minADS As Double, maxADS As Double, AppraisalSum As String, AppraisalHP As Integer, AppraisalAtk As Integer, AppraisalDef As Integer, AppraisalBest As String) As Variant
     
     ' Initalize IV bounds
     Dim aminIVSum As Integer, amaxIVSum As Integer, aminHP As Integer, amaxHP As Integer, aminAtk As Integer, amaxAtk As Integer, aminDef As Integer, amaxDef As Integer, aminIV As Integer, amaxIV As Integer
@@ -25,23 +25,17 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
         amaxIV = Range("maxIVD")
     End If
     
-    If Not AppraisalBest = "" Then
-        amaxHP = amaxIV - 1
-        amaxAtk = amaxIV - 1
-        amaxDef = amaxIV - 1
-    End If
-    
-    If AppraisalHP Then
+    If AppraisalHP = 1 Then
         aminHP = Application.WorksheetFunction.Max(aminIV, aminHP)
         amaxHP = Application.WorksheetFunction.Min(amaxIV, amaxHP)
     End If
     
-    If AppraisalAtk Then
+    If AppraisalAtk = 1 Then
         aminAtk = aminIV
         amaxAtk = amaxIV
     End If
     
-    If AppraisalDef Then
+    If AppraisalDef = 1 Then
         aminDef = aminIV
         amaxDef = amaxIV
     End If
@@ -64,7 +58,7 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     End If
     
     ' Define results
-    Dim Solutions As Integer, minIVSum As Integer, maxIVSum As Integer, minHP As Integer, maxHP As Integer, minAtk As Integer, maxAtk As Integer, minDef As Integer, maxDef As Integer, IVSum As Integer
+    Dim Solutions As Integer, minIVSum As Integer, maxIVSum As Integer, minHP As Integer, maxHP As Integer, minAtk As Integer, maxAtk As Integer, minDef As Integer, maxDef As Integer, IVSum As Integer, aHPAtk As Integer, aHPDef As Integer, aAtkDef As Integer
 
     ' Define storage of intermediate calculation for CP checking
     Dim ADS As Double
@@ -79,13 +73,18 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     minDef = 16
     maxDef = -1
     
+    ' Create multipliers for appraisal logic
+    aHPAtk = AppraisalHP - AppraisalAtk
+    aHPDef = AppraisalHP - AppraisalDef
+    aAtkDef = AppraisalAtk - AppraisalDef
+    
     ' Iterate through all possible IV combinations
     For HP = aminHP To amaxHP
         For Atk = aminAtk To amaxAtk
             For Def = aminDef To amaxDef
                 ADS = (BaseAtk + Atk) ^ 2 * (BaseDef + Def) * (BaseHP + HP)
                 IVSum = HP + Atk + Def
-                If HP >= rminHP And HP <= rmaxHP And ADS >= minADS And ADS <= maxADS And IVSum >= aminIVSum And IVSum <= amaxIVSum Then
+                If HP >= rminHP And HP <= rmaxHP And ADS >= minADS And ADS <= maxADS And IVSum >= aminIVSum And IVSum <= amaxIVSum And (aHPAtk = 0 Or aHPAtk * HP > aHPAtk * Atk) And (aHPDef = 0 Or aHPDef * HP > aHPDef * Def) And (aAtkDef = 0 Or aAtkDef * Atk > aAtkDef * Def) Then
                     minIVSum = Application.WorksheetFunction.Min(minIVSum, IVSum)
                     maxIVSum = Application.WorksheetFunction.Max(maxIVSum, IVSum)
                     minHP = Application.WorksheetFunction.Min(minHP, HP)
