@@ -25,6 +25,12 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
         amaxIV = Range("maxIVD")
     End If
     
+    If Not AppraisalBest = "" Then
+        amaxHP = amaxIV - 1
+        amaxAtk = amaxIV - 1
+        amaxDef = amaxIV - 1
+    End If
+    
     If AppraisalHP Then
         aminHP = Application.WorksheetFunction.Max(aminIV, aminHP)
         amaxHP = Application.WorksheetFunction.Min(amaxIV, amaxHP)
@@ -96,16 +102,37 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     
     ' Display results
     Dim Result(10) As Variant
-    Result(0) = Solutions
-    Result(1) = minIVSum
-    Result(2) = maxIVSum
-    Result(3) = minIVSum / 45
-    Result(4) = maxIVSum / 45
-    Result(5) = minHP
-    Result(6) = maxHP
-    Result(7) = minAtk
-    Result(8) = maxAtk
-    Result(9) = minDef
-    Result(10) = maxDef
+    
+    If Solutions = 0 Then
+    
+        Result(0) = Solutions
+        Result(1) = ""
+        Result(2) = ""
+        Result(3) = ""
+        Result(4) = ""
+        Result(5) = ""
+        Result(6) = ""
+        Result(7) = ""
+        Result(8) = ""
+        Result(9) = ""
+        Result(10) = ""
+
+    Else
+
+        Result(0) = Solutions
+        Result(1) = minIVSum
+        Result(2) = maxIVSum
+        Result(3) = minIVSum / 45
+        Result(4) = maxIVSum / 45
+        Result(5) = minHP
+        Result(6) = maxHP
+        Result(7) = minAtk
+        Result(8) = maxAtk
+        Result(9) = minDef
+        Result(10) = maxDef
+        
+    End If
+        
     IVSolution = Result
+        
 End Function
