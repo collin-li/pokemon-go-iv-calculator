@@ -58,7 +58,7 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     End If
     
     ' Define results
-    Dim Solutions As Integer, minIVSum As Integer, maxIVSum As Integer, minHP As Integer, maxHP As Integer, minAtk As Integer, maxAtk As Integer, minDef As Integer, maxDef As Integer, IVSum As Integer, aHPAtk As Integer, aHPDef As Integer, aAtkDef As Integer
+    Dim Solutions As Integer, minIVSum As Integer, maxIVSum As Integer, minHP As Integer, maxHP As Integer, minAtk As Integer, maxAtk As Integer, minDef As Integer, maxDef As Integer, IVSum As Integer, aHPAtk As Integer, aHPDef As Integer, aAtkDef As Integer, aHPAtkSame As Integer, aHPDefSame As Integer, aAtkDefSame As Integer
 
     ' Define storage of intermediate calculation for CP checking
     Dim ADS As Double
@@ -78,13 +78,17 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     aHPDef = AppraisalHP - AppraisalDef
     aAtkDef = AppraisalAtk - AppraisalDef
     
+    aHPAtkSame = Int((AppraisalHP + AppraisalAtk) / 2)
+    aHPDefSame = Int((AppraisalHP + AppraisalDef) / 2)
+    aAtkDefSame = Int((AppraisalAtk + AppraisalDef) / 2)
+    
     ' Iterate through all possible IV combinations
     For HP = aminHP To amaxHP
         For Atk = aminAtk To amaxAtk
             For Def = aminDef To amaxDef
                 ADS = (BaseAtk + Atk) ^ 2 * (BaseDef + Def) * (BaseHP + HP)
                 IVSum = HP + Atk + Def
-                If HP >= rminHP And HP <= rmaxHP And ADS >= minADS And ADS <= maxADS And IVSum >= aminIVSum And IVSum <= amaxIVSum And (aHPAtk = 0 Or aHPAtk * HP > aHPAtk * Atk) And (aHPDef = 0 Or aHPDef * HP > aHPDef * Def) And (aAtkDef = 0 Or aAtkDef * Atk > aAtkDef * Def) Then
+                If HP >= rminHP And HP <= rmaxHP And ADS >= minADS And ADS <= maxADS And IVSum >= aminIVSum And IVSum <= amaxIVSum And (aHPAtk = 0 Or aHPAtk * HP > aHPAtk * Atk) And (aHPDef = 0 Or aHPDef * HP > aHPDef * Def) And (aAtkDef = 0 Or aAtkDef * Atk > aAtkDef * Def) And aHPAtkSame * HP = aHPAtkSame * Atk And aHPDefSame * HP = aHPDefSame * Def And aAtkDefSame * Atk = aAtkDefSame * Def Then
                     minIVSum = Application.WorksheetFunction.Min(minIVSum, IVSum)
                     maxIVSum = Application.WorksheetFunction.Max(maxIVSum, IVSum)
                     minHP = Application.WorksheetFunction.Min(minHP, HP)
@@ -135,3 +139,4 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     IVSolution = Result
         
 End Function
+
