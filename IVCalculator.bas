@@ -1,5 +1,5 @@
 Attribute VB_Name = "IVCalculator"
-Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, rminHP As Integer, rmaxHP As Integer, minADS As Double, maxADS As Double, AppraisalSum As String, AppraisalHP As Integer, AppraisalAtk As Integer, AppraisalDef As Integer, AppraisalBest As String) As Variant
+Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, rminHP As Integer, rmaxHP As Integer, minADS As Double, maxADS As Double, AppraisalSum As String, AppraisalHP As Integer, AppraisalAtk As Integer, AppraisalDef As Integer, AppraisalBest As String, ProjectedBaseHP As Integer, ProjectedBaseAtk As Integer, ProjectedBaseDef As Integer) As Variant
     
     ' Initalize IV bounds
     Dim aminIVSum As Integer, amaxIVSum As Integer, aminHP As Integer, amaxHP As Integer, aminAtk As Integer, amaxAtk As Integer, aminDef As Integer, amaxDef As Integer, aminIV As Integer, amaxIV As Integer
@@ -61,7 +61,7 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     Dim Solutions As Integer, minIVSum As Integer, maxIVSum As Integer, minHP As Integer, maxHP As Integer, minAtk As Integer, maxAtk As Integer, minDef As Integer, maxDef As Integer, IVSum As Integer, aHPAtk As Integer, aHPDef As Integer, aAtkDef As Integer
 
     ' Define storage of intermediate calculation for CP checking
-    Dim ADS As Double
+    Dim ADS As Double, ProjectedADS As Double, ProjectedMinADS As Double, ProjectedMaxADS As Double
     
     ' Initialize minimum and maximum possible results
     minIVSum = 46
@@ -72,6 +72,8 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
     maxHP = -1
     minDef = 16
     maxDef = -1
+    ProjectedMaxADS = ProjectedBaseAtk ^ 2 * ProjectedBaseDef * ProjectedBaseHP
+    ProjectedMinADS = (ProjectedBaseAtk + 15) ^ 2 * (ProjectedBaseDef + 15) * (ProjectedBaseHP + 15)
     
     ' Create multipliers for appraisal logic
     aHPAtk = AppraisalHP - AppraisalAtk
@@ -85,6 +87,7 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
                 ADS = (BaseAtk + Atk) ^ 2 * (BaseDef + Def) * (BaseHP + HP)
                 IVSum = HP + Atk + Def
                 If HP >= rminHP And HP <= rmaxHP And ADS >= minADS And ADS <= maxADS And IVSum >= aminIVSum And IVSum <= amaxIVSum And (aHPAtk = 0 Or aHPAtk * HP > aHPAtk * Atk) And (aHPDef = 0 Or aHPDef * HP > aHPDef * Def) And (aAtkDef = 0 Or aAtkDef * Atk > aAtkDef * Def) Then
+                    Solutions = Solutions + 1
                     minIVSum = Application.WorksheetFunction.Min(minIVSum, IVSum)
                     maxIVSum = Application.WorksheetFunction.Max(maxIVSum, IVSum)
                     minHP = Application.WorksheetFunction.Min(minHP, HP)
@@ -93,14 +96,16 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
                     maxAtk = Application.WorksheetFunction.Max(maxAtk, Atk)
                     minDef = Application.WorksheetFunction.Min(minDef, Def)
                     maxDef = Application.WorksheetFunction.Max(maxDef, Def)
-                    Solutions = Solutions + 1
+                    ProjectedADS = (ProjectedBaseAtk + Atk) ^ 2 * (ProjectedBaseDef + Def) * (ProjectedBaseHP + HP)
+                    ProjectedMinADS = Application.WorksheetFunction.Min(ProjectedMinADS, ProjectedADS)
+                    ProjectedMaxADS = Application.WorksheetFunction.Max(ProjectedMaxADS, ProjectedADS)
                 End If
             Next
         Next
     Next
     
     ' Display results
-    Dim Result(10) As Variant
+    Dim Result(12) As Variant
     
     If Solutions = 0 Then
     
@@ -115,6 +120,8 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
         Result(8) = ""
         Result(9) = ""
         Result(10) = ""
+        Result(11) = ""
+        Result(12) = ""
 
     Else
 
@@ -129,9 +136,12 @@ Function IVSolution(BaseHP As Integer, BaseAtk As Integer, BaseDef As Integer, r
         Result(8) = maxAtk
         Result(9) = minDef
         Result(10) = maxDef
+        Result(11) = ProjectedMinADS
+        Result(12) = ProjectedMaxADS
         
     End If
         
     IVSolution = Result
         
 End Function
+
