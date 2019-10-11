@@ -14,4 +14,4 @@ While there exist many IV calculators already, I prefer to keep track of my Poke
 * (Optional) Store remarks on the right-hand side to keep notes about why I am keeping that Pokemon (e.g. bench vs. evolve)
 
 **Plans**
-* Gen 4 update
+* Gen 5 update
