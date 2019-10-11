@@ -12,3 +12,6 @@ While there exist many IV calculators already, I prefer to keep track of my Poke
 * (Optional) Input exact Pokemon level if you know it (you can infer this by placing your thumb near the dot, and move to other same Stardust Pokemon, which are typically adjacent if sorted by CP, and check whether the dot is in a different location - from this you can infer which of the two integer levels it is, assuming the Pokemon non-Powered)
 * (Optional) Pokemon are assumed to be non-Powered by default, to reduce inputs, but there is a 0/1 switch for this
 * (Optional) Store remarks on the right-hand side to keep notes about why I am keeping that Pokemon (e.g. bench vs. evolve)
+
+**Plans**
+* Gen 4 update
